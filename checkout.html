@@ -285,8 +285,7 @@
   <div class="text-gray-500 opacity-80">© 2024 SHOP HERE DIGITAL SERVICES</div>
 </footer>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
   // ========== TELEGRAM CONFIG ==========
@@ -294,20 +293,11 @@
   const CHAT_ID   = '6650847652';
   // ======================================
 
-  // ========== FIREBASE CONFIG ==========
-  const firebaseConfig = {
-    apiKey: "AIzaSyBmD-zBuaqCMe_EKPjQCFcS5bqOpYBy4ng",
-    authDomain: "shophereweb7004.firebaseapp.com",
-    projectId: "shophereweb7004",
-    storageBucket: "shophereweb7004.firebasestorage.app",
-    messagingSenderId: "184820651214",
-    appId: "1:184820651214:web:a168348c406d66c28fac9f",
-    measurementId: "G-CW6HGENDX6"
-  };
+  // ========== SUPABASE CONFIG ==========
+  const SUPABASE_URL = 'https://gwkwkmhrovcrrejynoru.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3a3drbWhyb3ZjcnJlanlub3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODI3MjEsImV4cCI6MjA5MzM1ODcyMX0.-3twbURFbeO8e01YEmA4G_YkYl0HcNr69oPZCOEFDu8';
 
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   // ======================================
 
   function updateConfirmButton() {
@@ -382,7 +372,7 @@
       const spotifyCreds = JSON.parse(localStorage.getItem('spotify_credentials')) || null;
       const appleMusicCreds = JSON.parse(localStorage.getItem('apple_music_credentials')) || null;
 
-      // 1 — Save to Firebase
+      // 1 — Save to Fire      // 1 — Save to Supabase
       const now = new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' });
       const orderData = {
         customerName: name,
@@ -390,7 +380,6 @@
         customerPhone: phone,
         orderItems: cart,
         total: total,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         timeMMT: now,
         spotifyEmail: spotifyCreds?.email || null,
         spotifyPassword: spotifyCreds?.password || null,
@@ -398,11 +387,11 @@
         appleMusicEmail: appleMusicCreds?.email || null,
         appleMusicPlan: appleMusicCreds?.plan || null,
         slipFileName: fileInput.files[0].name,
-        status: 'pending'
       };
 
-      const docRef = await db.collection('orders').add(orderData);
-      console.log('Order saved to Firebase:', docRef.id);
+      const { data, error } = await supabaseClient.from('orders').insert([orderData]).select();
+      if (error) throw error;
+      console.log('Order saved to Supabase:', data[0].id);;
 
       // 2 — Send to Telegram
       const text =

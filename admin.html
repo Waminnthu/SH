@@ -7,8 +7,7 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
   .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display: inline-block; vertical-align: middle; }
@@ -135,32 +134,24 @@
 </div>
 
 <script>
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBmD-zBuaqCMe_EKPjQCFcS5bqOpYBy4ng",
-    authDomain: "shophereweb7004.firebaseapp.com",
-    projectId: "shophereweb7004",
-    storageBucket: "shophereweb7004.firebasestorage.app",
-    messagingSenderId: "184820651214",
-    appId: "1:184820651214:web:a168348c406d66c28fac9f"
-  };
+  // Supabase Config
+  const SUPABASE_URL = 'https://gwkwkmhrovcrrejynoru.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3a3drbWhyb3ZjcnJlanlub3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODI3MjEsImV4cCI6MjA5MzM1ODcyMX0.-3twbURFbeO8e01YEmA4G_YkYl0HcNr69oPZCOEFDu8';
 
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore(app);
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   let allOrders = [];
 
   // Load orders
   async function loadOrders() {
     try {
-      const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
-      allOrders = [];
+      const { data: orders, error } = await supabaseClient.from('orders').select('*').order('timestamp', { ascending: false });
+      if (error) throw error;
+      
+      allOrders = orders;
       let total = 0, pending = 0, verified = 0;
 
-      snapshot.forEach(doc => {
-        const order = { id: doc.id, ...doc.data() };
-        allOrders.push(order);
-        
+      allOrders.forEach(order => {
         if (order.status === 'pending') pending++;
         if (order.status === 'verified') verified++;
         
@@ -199,7 +190,7 @@
       <div class="table-row cursor-pointer" onclick="showOrderDetails('${order.id}')">
         <div>
           <p class="font-bold text-white">${order.customerName}</p>
-          <p class="text-xs text-gray-500">${new Date(order.timestamp?.toDate()).toLocaleDateString()}</p>
+          <p class="text-xs text-gray-500">${new Date(order.timestamp).toLocaleDateString()}</p>
         </div>
         <div>
           <p class="text-sm text-white break-all">${order.customerEmail}</p>
@@ -243,7 +234,7 @@
     const modal = document.getElementById('orderModal');
     const content = document.getElementById('modalContent');
 
-    const timestamp = order.timestamp?.toDate ? new Date(order.timestamp.toDate()).toLocaleString('en-GB', { timeZone: 'Asia/Yangon' }) : order.timeMMT;
+    const timestamp = order.timestamp ? new Date(order.timestamp).toLocaleString('en-GB', { timeZone: 'Asia/Yangon' }) : order.timeMMT;
 
     content.innerHTML = `
       <section>
@@ -318,7 +309,9 @@
 
   async function updateOrderStatus(orderId, status) {
     try {
-      await db.collection('orders').doc(orderId).update({ status });
+      const { error } = await supabaseClient.from('orders').update({ status }).eq('id', orderId);
+      if (error) throw error;
+      
       const order = allOrders.find(o => o.id === orderId);
       if (order) order.status = status;
       displayOrders(allOrders);
@@ -338,9 +331,12 @@
   loadOrders();
 
   // Real-time updates
-  db.collection('orders').orderBy('timestamp', 'desc').onSnapshot(() => {
-    loadOrders();
-  });
+  supabaseClient
+    .channel('orders_channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      loadOrders();
+    })
+    .subscribe();
 </script>
 
 </body>
