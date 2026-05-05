@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SHOP HERE | Order Submitted!</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; vertical-align:middle; }
+  @keyframes pop { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+  .pop { animation: pop 0.5s ease forwards; }
+</style>
+</head>
+<body class="bg-[#0A0A0A] text-white min-h-screen flex items-center justify-center font-['Space_Grotesk'] px-6">
+  <div class="text-center max-w-md">
+    <div class="pop inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-500/20 border-2 border-green-500/40 mb-6">
+      <span class="material-symbols-outlined text-5xl text-green-400">check_circle</span>
+    </div>
+    <h1 class="text-3xl font-bold mb-3">Order Submitted! 🎉</h1>
+    <p class="text-gray-400 text-base leading-relaxed mb-8">
+      We've received your payment slip and order details.<br/>
+      We'll verify your payment and send your access credentials to your email <strong class="text-white">within a few minutes</strong>.
+    </p>
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8 text-left space-y-3">
+      <div class="flex items-center gap-3 text-sm">
+        <span class="material-symbols-outlined text-[#0070FF]">schedule</span>
+        <span class="text-gray-300">Processing time: <strong class="text-white">5–30 minutes</strong></span>
+      </div>
+      <div class="flex items-center gap-3 text-sm">
+        <span class="material-symbols-outlined text-[#0070FF]">forward_to_inbox</span>
+        <span class="text-gray-300">Check your <strong class="text-white">email inbox & spam folder</strong></span>
+      </div>
+      <div class="flex items-center gap-3 text-sm">
+        <span class="material-symbols-outlined text-[#0070FF]">support_agent</span>
+        <span class="text-gray-300">Need help? Visit our <a href="support.html" class="text-[#0070FF] underline">support page</a></span>
+      </div>
+    </div>
+    <a href="index.html">
+      <button class="bg-[#0070FF] text-white font-bold py-3 px-10 rounded-xl hover:bg-blue-500 transition-all">
+        Back to Marketplace
+      </button>
+    </a>
+  </div>
+</body>
+</html>

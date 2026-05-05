@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payment Verification | SHOP HERE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "background": "#131313",
+          "surface-container-lowest": "#0e0e0e",
+          "outline": "#8c90a1",
+          "on-background": "#e5e2e1",
+          "on-surface": "#e5e2e1",
+          "on-surface-variant": "#c2c6d8",
+          "surface-container": "#201f1f",
+          "surface-container-high": "#2a2a2a",
+          "primary": "#b0c6ff",
+          "primary-container": "#568dff"
+        },
+        fontFamily: {
+          "body-lg":["Inter"],"body-md":["Inter"],
+          "h1":["Space Grotesk"],"h2":["Space Grotesk"],"h3":["Space Grotesk"],"label-caps":["Space Grotesk"]
+        },
+        fontSize: {
+          "body-lg":["18px",{lineHeight:"1.6",fontWeight:"400"}],
+          "body-md":["16px",{lineHeight:"1.5",fontWeight:"400"}],
+          "h1":["64px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+          "h2":["40px",{lineHeight:"1.2",letterSpacing:"-0.01em",fontWeight:"600"}],
+          "h3":["24px",{lineHeight:"1.3",fontWeight:"600"}],
+          "label-caps":["12px",{lineHeight:"1.0",letterSpacing:"0.1em",fontWeight:"700"}]
+        },
+        spacing: { "xs":"4px","sm":"8px","md":"16px","lg":"24px","xl":"48px","xxl":"80px" }
+      }
+    }
+  }
+</script>
+<style>
+  .glass-edge { border:1px solid rgba(255,255,255,0.1); }
+  .status-glow { box-shadow:0 0 15px rgba(0,112,255,0.5); }
+  @keyframes pulse-glow { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.05)} }
+  .processing-pulse { animation:pulse-glow 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; vertical-align:middle; }
+</style>
+</head>
+<body class="bg-[#0A0A0A] text-on-background font-body-md">
+
+<main class="min-h-screen flex items-center justify-center px-lg bg-[#0A0A0A]">
+  <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-12 gap-lg">
+
+    <!-- Main Card -->
+    <div class="md:col-span-12 bg-white/5 backdrop-blur-[30px] glass-edge rounded-xl p-xl flex flex-col items-center text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]">
+
+      <!-- Spinner -->
+      <div class="relative mb-xl">
+        <div class="w-32 h-32 rounded-full border-4 border-white/5 flex items-center justify-center">
+          <div class="w-24 h-24 rounded-full border-4 border-t-[#0070FF] border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="material-symbols-outlined text-5xl text-[#0070FF] status-glow">verified_user</span>
+          </div>
+        </div>
+        <div class="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-[#0070FF] status-glow animate-pulse"></div>
+      </div>
+
+      <h1 class="font-h1 text-h2 md:text-h1 mb-md text-white tracking-tighter">
+        Payment Verification in Progress.
+      </h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-xl">
+        Your MMK payment is being manually verified by the SHOP HERE team. Expect your account credentials via email within 15 minutes.
+      </p>
+
+      <!-- Steps -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-md w-full mt-xl">
+        <div class="bg-[#141414] glass-edge p-md rounded-lg flex items-center gap-md text-left">
+          <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#0070FF]">check_circle</span>
+          </div>
+          <div>
+            <p class="font-label-caps text-label-caps text-on-surface-variant mb-xs">STEP 01</p>
+            <p class="font-bold text-white">Payment Received</p>
+          </div>
+        </div>
+        <div class="bg-white/5 glass-edge p-md rounded-lg flex items-center gap-md text-left">
+          <div class="w-10 h-10 rounded bg-[#0070FF]/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#0070FF] animate-pulse">hourglass_empty</span>
+          </div>
+          <div>
+            <p class="font-label-caps text-label-caps text-[#0070FF] mb-xs">STEP 02</p>
+            <p class="font-bold text-white">Manual Review</p>
+          </div>
+        </div>
+        <div class="bg-[#141414] glass-edge p-md rounded-lg flex items-center gap-md text-left opacity-40">
+          <div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-gray-500">mail</span>
+          </div>
+          <div>
+            <p class="font-label-caps text-label-caps text-on-surface-variant mb-xs">STEP 03</p>
+            <p class="font-bold text-white">Delivery</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-xl flex flex-col md:flex-row gap-md">
+        <a href="index.html">
+          <button class="bg-[#0070FF] text-white font-label-caps px-xl py-md rounded-full font-bold hover:scale-95 transition-all shadow-[0_0_20px_rgba(0,112,255,0.4)]">
+            BACK TO MARKETPLACE
+          </button>
+        </a>
+        <a href="support.html">
+          <button class="bg-transparent glass-edge text-white font-label-caps px-xl py-md rounded-full font-bold hover:bg-white/10 transition-all">
+            CONTACT SUPPORT
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-lg">
+      <div class="bg-[#141414] glass-edge p-lg rounded-xl flex items-start gap-lg">
+        <div class="p-sm bg-white/5 rounded-lg">
+          <span class="material-symbols-outlined text-[#0070FF]">security</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-white mb-xs">Security Check</h3>
+          <p class="text-on-surface-variant text-sm">We verify every MMK transaction manually to ensure the safety of our marketplace and prevent unauthorized access to premium assets.</p>
+        </div>
+      </div>
+      <div class="bg-[#141414] glass-edge p-lg rounded-xl flex items-start gap-lg">
+        <div class="p-sm bg-white/5 rounded-lg">
+          <span class="material-symbols-outlined text-[#0070FF]">bolt</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-white mb-xs">Instant Setup</h3>
+          <p class="text-on-surface-variant text-sm">Once verified by our team, your credentials are automatically provisioned and dispatched to your registered email address.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="w-full flex flex-col md:flex-row justify-between items-center px-4 md:px-8 lg:px-12 gap-6 bg-[#0A0A0A] py-12 border-t border-white/5">
+  <div class="flex flex-col gap-2">
+    <span class="text-lg font-bold text-white font-['Space_Grotesk'] uppercase tracking-widest">SHOP HERE</span>
+    <p class="font-['Space_Grotesk'] text-sm uppercase tracking-widest text-gray-500">© 2024 SHOP HERE DIGITAL SERVICES</p>
+  </div>
+  <div class="flex flex-wrap justify-center gap-6">
+    <a class="font-['Space_Grotesk'] text-sm uppercase tracking-widest text-gray-500 hover:text-[#0070FF] transition-colors" href="#">Terms of Service</a>
+    <a class="font-['Space_Grotesk'] text-sm uppercase tracking-widest text-gray-500 hover:text-[#0070FF] transition-colors" href="#">Privacy Policy</a>
+    <a class="font-['Space_Grotesk'] text-sm uppercase tracking-widest text-gray-500 hover:text-[#0070FF] transition-colors" href="support.html">Support Center</a>
+  </div>
+</footer>
+
+</body>
+</html>

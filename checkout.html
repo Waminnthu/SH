@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | SHOP HERE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "background": "#131313",
+          "surface-container-lowest": "#0e0e0e",
+          "outline": "#8c90a1",
+          "on-background": "#e5e2e1",
+          "on-surface": "#e5e2e1",
+          "on-surface-variant": "#c2c6d8",
+          "surface-container": "#201f1f",
+          "surface-container-high": "#2a2a2a",
+          "primary": "#b0c6ff",
+          "primary-container": "#568dff",
+          "surface-dim": "#131313",
+          "surface": "#131313"
+        },
+        borderRadius: { "xxl":"24px" },
+        fontFamily: {
+          "body-lg":["Inter"],"body-md":["Inter"],
+          "h1":["Space Grotesk"],"h2":["Space Grotesk"],"h3":["Space Grotesk"],"label-caps":["Space Grotesk"]
+        },
+        fontSize: {
+          "body-lg":["18px",{lineHeight:"1.6",fontWeight:"400"}],
+          "body-md":["16px",{lineHeight:"1.5",fontWeight:"400"}],
+          "h1":["64px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],
+          "h2":["40px",{lineHeight:"1.2",letterSpacing:"-0.01em",fontWeight:"600"}],
+          "h3":["24px",{lineHeight:"1.3",fontWeight:"600"}],
+          "label-caps":["12px",{lineHeight:"1.0",letterSpacing:"0.1em",fontWeight:"700"}]
+        },
+        spacing: { "xs":"4px","sm":"8px","md":"16px","lg":"24px","xl":"48px","xxl":"80px" }
+      }
+    }
+  }
+</script>
+<style>
+  .glass-card { background:rgba(255,255,255,0.03); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); }
+  .glow-pip { box-shadow:0 0 8px 2px rgba(0,112,255,0.5); }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; vertical-align:middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 h-20 bg-white/5 backdrop-blur-[30px] border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] font-['Space_Grotesk']">
+  <a href="index.html" class="text-2xl font-black tracking-tighter text-white uppercase">SHOP HERE</a>
+  <nav class="hidden md:flex items-center gap-8">
+    <a class="text-gray-400 font-medium hover:text-white transition-colors hover:bg-white/5 p-2 rounded-lg" href="index.html">Marketplace</a>
+    <a class="text-gray-400 font-medium hover:text-white transition-colors hover:bg-white/5 p-2 rounded-lg" href="support.html">Support</a>
+    <a class="text-gray-400 font-medium hover:text-white transition-colors hover:bg-white/5 p-2 rounded-lg" href="support.html">Status</a>
+  </nav>
+  <div class="flex items-center gap-6">
+    <a href="index.html"><button class="material-symbols-outlined text-white opacity-80 hover:opacity-100 transition-opacity">shopping_cart</button></a>
+    <button class="bg-[#0070FF] text-white px-6 py-2.5 rounded-full font-bold text-sm tracking-widest uppercase hover:scale-105 active:scale-95 transition-all">Sign In</button>
+  </div>
+</header>
+
+<main class="pt-32 pb-xxl px-4 md:px-8 max-w-7xl mx-auto">
+
+  <!-- Breadcrumb -->
+  <div class="mb-xl">
+    <h1 class="font-h1 text-h2 md:text-h1 mb-sm text-white">Checkout</h1>
+    <div class="flex items-center gap-2 text-outline">
+      <span class="font-label-caps text-label-caps uppercase">Cart</span>
+      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+      <span class="font-label-caps text-label-caps uppercase text-white">Payment Information</span>
+    </div>
+  </div>
+
+  <!-- Checkout Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-5 space-y-lg">
+      <section class="glass-card rounded-xxl p-lg">
+        <div class="flex justify-between items-center mb-lg">
+          <h3 class="font-h3 text-h3 text-white">Order Summary</h3>
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-[#0070FF] glow-pip"></div>
+            <span class="font-label-caps text-label-caps text-[#0070FF]">Secure Transaction</span>
+          </div>
+        </div>
+        <div class="space-y-md" id="cart-items"></div>
+
+        <!-- Spotify Credentials -->
+        <div id="spotify-credentials" class="mt-lg p-md bg-green-500/10 border border-green-500/20 rounded-xl hidden">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-green-500">account_circle</span>
+            <h4 class="font-bold text-green-400">Spotify Account Details</h4>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-outline">Email:</span><span class="text-white font-mono" id="spotify-email-display"></span></div>
+            <div class="flex justify-between"><span class="text-outline">Password:</span><span class="text-white font-mono" id="spotify-password-display"></span></div>
+            <div class="flex justify-between"><span class="text-outline">Plan:</span><span class="text-white" id="spotify-plan-display"></span></div>
+          </div>
+          <p class="text-xs text-green-300 mt-3">✅ Account credentials received and ready for upgrade</p>
+        </div>
+
+        <!-- Apple Music Credentials -->
+        <div id="apple-music-credentials" class="mt-lg p-md bg-blue-500/10 border border-blue-500/20 rounded-xl hidden">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-blue-500">music_note</span>
+            <h4 class="font-bold text-blue-400">Apple Music Account Details</h4>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-outline">Apple ID Email:</span><span class="text-white font-mono" id="apple-music-email-display"></span></div>
+            <div class="flex justify-between"><span class="text-outline">Plan:</span><span class="text-white" id="apple-music-plan-display"></span></div>
+          </div>
+          <p class="text-xs text-blue-300 mt-3">✅ Apple ID received - ready to send Family invitation</p>
+        </div>
+
+        <div class="mt-xl pt-lg border-t border-white/10 space-y-md">
+          <div class="flex justify-between text-outline"><span>Subtotal</span><span id="subtotal">0 MMK</span></div>
+          <div class="flex justify-between text-outline"><span>Platform Fee</span><span>0 MMK</span></div>
+          <div class="flex justify-between items-end pt-sm">
+            <span class="font-h3 text-h3 text-white">Total</span>
+            <span class="text-[32px] text-[#0070FF] font-bold font-['Space_Grotesk']" id="total">0 MMK</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="glass-card rounded-xxl p-lg border-l-4 border-l-[#0070FF]">
+        <div class="flex gap-md">
+          <span class="material-symbols-outlined text-[#0070FF]">verified_user</span>
+          <div>
+            <p class="font-bold text-white mb-xs">Fast Manual Delivery</p>
+            <p class="text-outline text-sm leading-relaxed">Assets and service credentials will be manually processed and dispatched to your email within 1-2 hours after payment verification.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment & Upload -->
+    <div class="lg:col-span-7 space-y-lg">
+
+      <!-- Payment Instructions -->
+      <section class="glass-card rounded-xxl overflow-hidden">
+        <div class="bg-white/5 p-lg border-b border-white/10">
+          <h3 class="font-h3 text-h3 text-white">Payment Instructions</h3>
+          <p class="text-outline text-sm mt-1">Transfer the exact total to any of the following Myanmar payment methods.</p>
+        </div>
+        <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+          <div class="space-y-md">
+            <label class="font-label-caps text-label-caps text-outline uppercase">Mobile Wallet Payments</label>
+            <div class="bg-surface-container-lowest p-md rounded-xl border border-white/5 space-y-sm">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="text-xs text-[#0070FF] font-bold mb-0.5">KBZ Pay</p>
+                  <p class="font-bold text-white text-lg tracking-tight">09 792 967 004</p>
+                </div>
+                <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                  <span class="material-symbols-outlined text-white">smartphone</span>
+                </div>
+              </div>
+              <div class="pt-sm border-t border-white/5">
+                <p class="text-xs text-[#0070FF] font-bold mb-0.5">AYA Pay</p>
+                <p class="font-bold text-white uppercase tracking-tight">09 792 967 004</p>
+              </div>
+              <div class="pt-sm border-t border-white/5">
+                <p class="text-xs text-[#0070FF] font-bold mb-0.5">Wave Pay</p>
+                <p class="font-bold text-white uppercase tracking-tight">09 792 967 004</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-md">
+            <label class="font-label-caps text-label-caps text-outline uppercase">Bank Accounts</label>
+            <div class="bg-surface-container-lowest p-md rounded-xl border border-white/5 space-y-sm">
+              <div>
+                <p class="text-xs text-[#0070FF] font-bold mb-0.5">KBZ Bank</p>
+                <p class="text-sm text-outline">Account Name</p>
+                <p class="font-bold text-white uppercase tracking-tight mb-1">WAI MIN THU</p>
+                <p class="text-sm text-outline">Account Number</p>
+                <p class="font-bold text-white text-lg">0513 0105 1019 59001</p>
+              </div>
+              <div class="pt-sm border-t border-white/5">
+                <p class="text-xs text-[#0070FF] font-bold mb-0.5">AYA Bank</p>
+                <p class="text-sm text-outline">Account Name</p>
+                <p class="font-bold text-white uppercase tracking-tight mb-1">WAI MIN THU</p>
+                <p class="text-sm text-outline">Account Number</p>
+                <p class="font-bold text-white text-lg">200 2822 7209</p>
+              </div>
+              <div class="pt-sm border-t border-white/5">
+                <p class="text-xs text-[#0070FF] font-bold mb-0.5">CB Bank</p>
+                <p class="text-sm text-outline">Account Name</p>
+                <p class="font-bold text-white uppercase tracking-tight mb-1">U WAI MINN THU</p>
+                <p class="text-sm text-outline">Account Number</p>
+                <p class="font-bold text-white text-lg">0047 6005 0004 6566</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Info + Upload -->
+      <section class="glass-card rounded-xxl p-lg space-y-lg">
+        <h3 class="font-h3 text-h3 text-white">Your Details &amp; Payment Slip</h3>
+
+        <!-- Name -->
+        <div>
+          <label class="block font-label-caps text-label-caps text-outline uppercase mb-2">Full Name</label>
+          <input type="text" id="customerName" placeholder="Your full name"
+            class="w-full bg-surface-container-lowest border border-white/10 rounded-xl px-4 py-3 text-white placeholder-outline focus:outline-none focus:border-[#0070FF] transition-colors font-['Inter']"/>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block font-label-caps text-label-caps text-outline uppercase mb-2">Email Address</label>
+          <input type="email" id="customerEmail" placeholder="you@example.com"
+            class="w-full bg-surface-container-lowest border border-white/10 rounded-xl px-4 py-3 text-white placeholder-outline focus:outline-none focus:border-[#0070FF] transition-colors font-['Inter']"/>
+          <p class="text-outline text-xs mt-1">Access credentials will be sent to this email.</p>
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label class="block font-label-caps text-label-caps text-outline uppercase mb-2">Phone Number</label>
+          <input type="tel" id="customerPhone" placeholder="09 XXX XXX XXX"
+            class="w-full bg-surface-container-lowest border border-white/10 rounded-xl px-4 py-3 text-white placeholder-outline focus:outline-none focus:border-[#0070FF] transition-colors font-['Inter']"/>
+        </div>
+
+        <!-- Upload -->
+        <div>
+          <label class="border-2 border-dashed border-white/20 rounded-xl p-xl flex flex-col items-center justify-center text-center hover:border-[#0070FF] hover:bg-[#0070FF]/5 transition-all duration-300 cursor-pointer group">
+            <input type="file" accept="image/*,.pdf" class="hidden" id="slip-upload" onchange="updateConfirmButton()"/>
+            <div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-md group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-4xl text-[#0070FF]">cloud_upload</span>
+            </div>
+            <p class="font-h3 text-h3 text-white mb-sm">Upload Payment Slip</p>
+            <p class="text-outline max-w-xs mx-auto">Drag and drop your transaction confirmation image or click to browse files.</p>
+            <p class="mt-md font-label-caps text-[10px] text-outline/50 uppercase">Supports: JPG, PNG, PDF (MAX 5MB)</p>
+          </label>
+          <p id="file-name" class="mt-2 text-center text-sm text-[#0070FF] hidden"></p>
+          <p class="mt-2 text-center text-xs text-outline/70">⚠️ Please upload your payment slip before confirming payment</p>
+        </div>
+
+        <!-- Error -->
+        <div id="errorMsg" style="display:none;" class="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm text-center"></div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col md:flex-row items-center gap-md">
+          <button onclick="confirmPayment()" id="confirm-payment-btn" disabled
+            class="w-full md:flex-1 bg-gray-500 text-white py-5 rounded-xl font-bold text-xl shadow-[0_0_30px_rgba(128,128,128,0.3)] cursor-not-allowed transition-all">
+            Confirm Payment
+          </button>
+          <a href="index.html" class="w-full md:w-auto">
+            <button class="w-full px-lg py-5 glass-card rounded-xl font-label-caps text-label-caps uppercase text-white hover:bg-white/10 transition-all">
+              Cancel Order
+            </button>
+          </a>
+        </div>
+      </section>
+
+      <div class="flex items-center justify-center gap-xl opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+        <span class="material-symbols-outlined text-4xl text-white">security</span>
+        <span class="material-symbols-outlined text-4xl text-white">shield_person</span>
+        <span class="material-symbols-outlined text-4xl text-white">lock</span>
+        <span class="material-symbols-outlined text-4xl text-white">account_balance</span>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="w-full flex flex-col md:flex-row justify-between items-center px-4 md:px-8 lg:px-12 py-12 gap-6 bg-[#0A0A0A] border-t border-white/5 font-['Space_Grotesk'] text-sm uppercase tracking-widest">
+  <div class="text-lg font-bold text-white">SHOP HERE</div>
+  <div class="flex flex-wrap justify-center gap-8">
+    <a class="text-gray-500 hover:text-[#0070FF] transition-colors" href="#">Terms of Service</a>
+    <a class="text-gray-500 hover:text-[#0070FF] transition-colors" href="#">Privacy Policy</a>
+    <a class="text-gray-500 hover:text-[#0070FF] transition-colors" href="support.html">Support Center</a>
+    <a class="text-gray-500 hover:text-[#0070FF] transition-colors" href="#">Refund Policy</a>
+  </div>
+  <div class="text-gray-500 opacity-80">© 2024 SHOP HERE DIGITAL SERVICES</div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // ========== TELEGRAM CONFIG ==========
+  const BOT_TOKEN = '8790956897:AAHu1t27PEu_NPhvPsQ1-PsSAYnSzTYC6fo';
+  const CHAT_ID   = '6650847652';
+  // ======================================
+
+  // ========== FIREBASE CONFIG ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmD-zBuaqCMe_EKPjQCFcS5bqOpYBy4ng",
+    authDomain: "shophereweb7004.firebaseapp.com",
+    projectId: "shophereweb7004",
+    storageBucket: "shophereweb7004.firebasestorage.app",
+    messagingSenderId: "184820651214",
+    appId: "1:184820651214:web:a168348c406d66c28fac9f",
+    measurementId: "G-CW6HGENDX6"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  // ======================================
+
+  function updateConfirmButton() {
+    const fileInput = document.getElementById('slip-upload');
+    const confirmBtn = document.getElementById('confirm-payment-btn');
+    const fileNameDisplay = document.getElementById('file-name');
+    if (fileInput.files.length > 0) {
+      confirmBtn.disabled = false;
+      confirmBtn.className = "w-full md:flex-1 bg-[#0070FF] text-white py-5 rounded-xl font-bold text-xl shadow-[0_0_30px_rgba(0,112,255,0.3)] hover:brightness-110 hover:shadow-[0_0_40px_rgba(0,112,255,0.5)] active:scale-[0.98] transition-all cursor-pointer";
+      fileNameDisplay.textContent = '✓ ' + fileInput.files[0].name;
+      fileNameDisplay.classList.remove('hidden');
+    } else {
+      confirmBtn.disabled = true;
+      confirmBtn.className = "w-full md:flex-1 bg-gray-500 text-white py-5 rounded-xl font-bold text-xl shadow-[0_0_30px_rgba(128,128,128,0.3)] cursor-not-allowed transition-all";
+      fileNameDisplay.classList.add('hidden');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', updateConfirmButton);
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => { el.style.display = 'none'; }, 5000);
+  }
+
+  function saveCustomerInfo() {
+    const name = document.getElementById('customerName').value.trim();
+    const email = document.getElementById('customerEmail').value.trim();
+    const phone = document.getElementById('customerPhone').value.trim();
+    const customerInfo = { name, email, phone, savedAt: new Date().toISOString() };
+    localStorage.setItem('customer_info', JSON.stringify(customerInfo));
+  }
+
+  function loadCustomerInfo() {
+    const info = JSON.parse(localStorage.getItem('customer_info')) || {};
+    if (info.name) document.getElementById('customerName').value = info.name;
+    if (info.email) document.getElementById('customerEmail').value = info.email;
+    if (info.phone) document.getElementById('customerPhone').value = info.phone;
+  }
+
+  async function confirmPayment() {
+    const name  = document.getElementById('customerName').value.trim();
+    const email = document.getElementById('customerEmail').value.trim();
+    const phone = document.getElementById('customerPhone').value.trim();
+    const fileInput = document.getElementById('slip-upload');
+
+    if (!name)               return showError('Please enter your full name.');
+    if (!email)              return showError('Please enter your email address.');
+    if (!phone)              return showError('Please enter your phone number.');
+    if (!fileInput.files.length) return showError('Please upload your payment slip.');
+
+    // Build order list from cart
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) return showError('Your cart is empty. Please add a service from the marketplace before confirming payment.');
+    const total = document.getElementById('total').textContent;
+    const orderList = cart.length > 0
+      ? cart.map(item => `• ${item.name} — ${item.price}`).join('\n')
+      : '• (No cart items)';
+
+    saveCustomerInfo();
+
+    // Loading state
+    const btn = document.getElementById('confirm-payment-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined spin" style="margin-right:8px">progress_activity</span> Sending...';
+
+    try {
+      // Get Spotify/Apple credentials if they exist
+      const spotifyCreds = JSON.parse(localStorage.getItem('spotify_credentials')) || null;
+      const appleMusicCreds = JSON.parse(localStorage.getItem('apple_music_credentials')) || null;
+
+      // 1 — Save to Firebase
+      const now = new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' });
+      const orderData = {
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        orderItems: cart,
+        total: total,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        timeMMT: now,
+        spotifyEmail: spotifyCreds?.email || null,
+        spotifyPassword: spotifyCreds?.password || null,
+        spotifyPlan: spotifyCreds?.plan || null,
+        appleMusicEmail: appleMusicCreds?.email || null,
+        appleMusicPlan: appleMusicCreds?.plan || null,
+        slipFileName: fileInput.files[0].name,
+        status: 'pending'
+      };
+
+      const docRef = await db.collection('orders').add(orderData);
+      console.log('Order saved to Firebase:', docRef.id);
+
+      // 2 — Send to Telegram
+      const text =
+        `🛒 *NEW ORDER — SHOP HERE*\n\n` +
+        `👤 *Name:* ${name}\n` +
+        `📧 *Email:* ${email}\n` +
+        `📱 *Phone:* ${phone}\n\n` +
+        `🛍️ *Order Items:*\n${orderList}\n\n` +
+        `💰 *Total:* ${total}\n` +
+        `${spotifyCreds ? `\n*Spotify Email:* ${spotifyCreds.email}\n*Spotify Plan:* ${spotifyCreds.plan}` : ''}` +
+        `${appleMusicCreds ? `\n*Apple Music Apple ID:* ${appleMusicCreds.email}\n*Apple Music Plan:* ${appleMusicCreds.plan}` : ''}` +
+        `\n🕐 *Time (MMT):* ${now}`;
+
+      const sendMessageRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'Markdown' })
+      });
+      const sendMessageData = await sendMessageRes.json();
+      if (!sendMessageRes.ok || !sendMessageData.ok) {
+        throw new Error(`Telegram sendMessage failed: ${sendMessageData.description || sendMessageRes.statusText}`);
+      }
+
+      // 3 — Send slip upload
+      const fd = new FormData();
+      fd.append('chat_id', CHAT_ID);
+      let uploadRes;
+      if (fileInput.files[0].type.startsWith('image/')) {
+        fd.append('photo', fileInput.files[0]);
+        fd.append('caption', `💳 Payment Slip\n👤 ${name}\n📧 ${email}\n💰 ${total}`);
+        uploadRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: fd
+        });
+      } else {
+        fd.append('document', fileInput.files[0]);
+        fd.append('caption', `💳 Payment Slip Document\n👤 ${name}\n📧 ${email}\n💰 ${total}`);
+        uploadRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+          method: 'POST',
+          body: fd
+        });
+      }
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok || !uploadData.ok) {
+        throw new Error(`Telegram upload failed: ${uploadData.description || uploadRes.statusText}`);
+      }
+
+      // 4 — Clear storage & go to success
+      localStorage.removeItem('cart');
+      localStorage.removeItem('spotify_credentials');
+      localStorage.removeItem('apple_music_credentials');
+      window.location.href = 'success.html';
+
+    } catch (err) {
+      console.error('Error:', err);
+      btn.disabled = false;
+      btn.innerHTML = 'Confirm Payment';
+      btn.className = "w-full md:flex-1 bg-[#0070FF] text-white py-5 rounded-xl font-bold text-xl shadow-[0_0_30px_rgba(0,112,255,0.3)] hover:brightness-110 transition-all cursor-pointer";
+      showError(err.message ? `Error: ${err.message}` : 'Something went wrong. Please check your connection and try again.');
+    }
+  }
+
+  // ---------- Cart ----------
+  function loadCart() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItems = document.getElementById('cart-items');
+    let subtotal = 0;
+
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<p class="text-outline text-center py-8">Your cart is empty. <a href="index.html" class="text-[#0070FF]">Go back to shop</a></p>';
+      document.getElementById('subtotal').textContent = '0 MMK';
+      document.getElementById('total').textContent = '0 MMK';
+      return;
+    }
+
+    cartItems.innerHTML = cart.map((item, index) => {
+      const priceNum = parseInt(item.price.replace(/[^\d]/g, ''));
+      const itemTotal = priceNum * (item.quantity || 1);
+      subtotal += itemTotal;
+      return `
+        <div class="flex gap-md p-md bg-[#141414] rounded-xl border border-white/5 relative">
+          <div class="w-16 h-16 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-3xl ${item.iconColor}">${item.icon}</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-white">${item.name}</p>
+            <p class="text-outline text-sm">Quantity: ${item.quantity || 1}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-white">${itemTotal.toLocaleString()} MMK</p>
+          </div>
+          <button onclick="removeFromCart(${index})" class="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors" title="Remove item">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('subtotal').textContent = subtotal.toLocaleString() + ' MMK';
+    document.getElementById('total').textContent = subtotal.toLocaleString() + ' MMK';
+    loadSpotifyCredentials();
+    loadAppleMusicCredentials();
+  }
+
+  function removeFromCart(index) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCart();
+    if (cart.length === 0) {
+      localStorage.removeItem('spotify_credentials');
+      localStorage.removeItem('apple_music_credentials');
+    }
+  }
+
+  function loadSpotifyCredentials() {
+    const c = JSON.parse(localStorage.getItem('spotify_credentials'));
+    const div = document.getElementById('spotify-credentials');
+    if (c) {
+      document.getElementById('spotify-email-display').textContent = c.email;
+      document.getElementById('spotify-password-display').textContent = '••••••••';
+      document.getElementById('spotify-plan-display').textContent = c.plan;
+      div.classList.remove('hidden');
+    } else { div.classList.add('hidden'); }
+  }
+
+  function loadAppleMusicCredentials() {
+    const c = JSON.parse(localStorage.getItem('apple_music_credentials'));
+    const div = document.getElementById('apple-music-credentials');
+    if (c) {
+      document.getElementById('apple-music-email-display').textContent = c.email;
+      document.getElementById('apple-music-plan-display').textContent = c.plan;
+      div.classList.remove('hidden');
+    } else { div.classList.add('hidden'); }
+  }
+
+  function loadCustomerInfo() {
+    const info = JSON.parse(localStorage.getItem('customer_info')) || {};
+    if (info.name) document.getElementById('customerName').value = info.name;
+    if (info.email) document.getElementById('customerEmail').value = info.email;
+    if (info.phone) document.getElementById('customerPhone').value = info.phone;
+  }
+
+  loadCustomerInfo();
+  loadCart();
+</script>
+</body>
+</html>

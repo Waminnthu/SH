@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard | SHOP HERE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+<style>
+  .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display: inline-block; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+  .table-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem; display: grid; grid-template-columns: 2fr 2fr 1.5fr 2fr 1fr; gap: 1rem; align-items: center; }
+  .table-row:hover { background: rgba(0,112,255,0.05); }
+  .badge { display: inline-block; padding: 0.35rem 0.75rem; border-radius: 0.5rem; font-size: 12px; font-weight: 600; }
+  .badge-pending { background: rgba(255,193,7,0.2); color: #ffc107; }
+  .badge-verified { background: rgba(76,175,80,0.2); color: #4caf50; }
+  .badge-rejected { background: rgba(244,67,54,0.2); color: #f44336; }
+</style>
+</head>
+<body class="bg-[#0A0A0A] text-white font-['Inter'] min-h-screen overflow-x-hidden">
+
+<!-- Nav -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-white/5 backdrop-blur-[30px] border-b border-white/10 font-['Space_Grotesk']">
+  <a href="index.html" class="text-2xl font-black tracking-tighter text-white uppercase">SHOP HERE</a>
+  <div class="text-sm text-gray-400">Admin Dashboard</div>
+  <a href="index.html" class="text-gray-400 hover:text-white transition-colors">← Back</a>
+</nav>
+
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="font-['Space_Grotesk'] text-3xl font-bold mb-2">Customer Orders</h1>
+    <p class="text-gray-400">Real-time view of all payments and customer information</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-400 text-sm mb-1">Total Orders</p>
+          <p class="text-3xl font-bold text-white" id="totalOrders">0</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-[#0070FF] opacity-50">receipt</span>
+      </div>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-400 text-sm mb-1">Pending</p>
+          <p class="text-3xl font-bold text-yellow-400" id="pendingOrders">0</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-yellow-500 opacity-50">schedule</span>
+      </div>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-400 text-sm mb-1">Verified</p>
+          <p class="text-3xl font-bold text-green-400" id="verifiedOrders">0</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-green-500 opacity-50">check_circle</span>
+      </div>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-400 text-sm mb-1">Revenue</p>
+          <p class="text-3xl font-bold text-[#0070FF]" id="totalRevenue">0K</p>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-[#0070FF] opacity-50">trending_up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="flex gap-4 mb-8">
+    <div class="flex-1">
+      <input type="text" id="searchInput" placeholder="Search by name or email..."
+        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0070FF] transition-colors"
+        oninput="filterOrders()"/>
+    </div>
+    <select id="statusFilter" class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0070FF] transition-colors"
+      onchange="filterOrders()">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="verified">Verified</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="text-center py-12">
+    <span class="material-symbols-outlined text-4xl spin" style="margin: 0 auto 1rem;">progress_activity</span>
+    <p class="text-gray-400">Loading orders...</p>
+  </div>
+
+  <!-- Orders Table -->
+  <div id="ordersContainer" style="display:none;" class="glass rounded-2xl overflow-hidden">
+    <div class="table-row bg-white/5 font-bold text-sm uppercase tracking-widest">
+      <div>Customer</div>
+      <div>Contact</div>
+      <div>Order</div>
+      <div>Credentials</div>
+      <div>Status</div>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" style="display:none;" class="text-center py-12">
+    <span class="material-symbols-outlined text-5xl text-gray-600 mb-4 block">inbox</span>
+    <p class="text-gray-400 text-lg">No orders found</p>
+  </div>
+
+</main>
+
+<!-- Order Detail Modal -->
+<div id="orderModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+  <div class="glass rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white/5 border-b border-white/10 px-6 py-4 flex justify-between items-center">
+      <h2 class="text-xl font-bold">Order Details</h2>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div id="modalContent" class="p-6 space-y-6"></div>
+  </div>
+</div>
+
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmD-zBuaqCMe_EKPjQCFcS5bqOpYBy4ng",
+    authDomain: "shophereweb7004.firebaseapp.com",
+    projectId: "shophereweb7004",
+    storageBucket: "shophereweb7004.firebasestorage.app",
+    messagingSenderId: "184820651214",
+    appId: "1:184820651214:web:a168348c406d66c28fac9f"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore(app);
+
+  let allOrders = [];
+
+  // Load orders
+  async function loadOrders() {
+    try {
+      const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
+      allOrders = [];
+      let total = 0, pending = 0, verified = 0;
+
+      snapshot.forEach(doc => {
+        const order = { id: doc.id, ...doc.data() };
+        allOrders.push(order);
+        
+        if (order.status === 'pending') pending++;
+        if (order.status === 'verified') verified++;
+        
+        const amount = parseInt(order.total?.replace(/[^\d]/g, '') || 0);
+        total += amount;
+      });
+
+      document.getElementById('totalOrders').textContent = allOrders.length;
+      document.getElementById('pendingOrders').textContent = pending;
+      document.getElementById('verifiedOrders').textContent = verified;
+      document.getElementById('totalRevenue').textContent = (total / 1000).toFixed(1) + 'K';
+
+      displayOrders(allOrders);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('ordersContainer').style.display = 'block';
+
+    } catch (err) {
+      console.error('Error loading orders:', err);
+      document.getElementById('loading').innerHTML = '<p class="text-red-400">Error loading orders</p>';
+    }
+  }
+
+  function displayOrders(orders) {
+    const list = document.getElementById('ordersList');
+    
+    if (orders.length === 0) {
+      document.getElementById('ordersContainer').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('ordersContainer').style.display = 'block';
+
+    list.innerHTML = orders.map(order => `
+      <div class="table-row cursor-pointer" onclick="showOrderDetails('${order.id}')">
+        <div>
+          <p class="font-bold text-white">${order.customerName}</p>
+          <p class="text-xs text-gray-500">${new Date(order.timestamp?.toDate()).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <p class="text-sm text-white break-all">${order.customerEmail}</p>
+          <p class="text-xs text-gray-500">${order.customerPhone}</p>
+        </div>
+        <div>
+          <p class="text-sm text-[#0070FF] font-bold">${order.total}</p>
+          <p class="text-xs text-gray-500">${order.orderItems?.length || 0} item(s)</p>
+        </div>
+        <div>
+          ${order.spotifyEmail ? `<p class="text-xs text-green-400">📱 Spotify</p>` : ''}
+          ${order.appleMusicEmail ? `<p class="text-xs text-pink-400">🎵 Apple Music</p>` : ''}
+          ${!order.spotifyEmail && !order.appleMusicEmail ? `<p class="text-xs text-gray-500">—</p>` : ''}
+        </div>
+        <div>
+          <span class="badge badge-${order.status || 'pending'}">${order.status || 'pending'}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterOrders() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+
+    const filtered = allOrders.filter(order => {
+      const matchSearch = !search || 
+        order.customerName.toLowerCase().includes(search) ||
+        order.customerEmail.toLowerCase().includes(search);
+      const matchStatus = !status || order.status === status;
+      return matchSearch && matchStatus;
+    });
+
+    displayOrders(filtered);
+  }
+
+  function showOrderDetails(orderId) {
+    const order = allOrders.find(o => o.id === orderId);
+    if (!order) return;
+
+    const modal = document.getElementById('orderModal');
+    const content = document.getElementById('modalContent');
+
+    const timestamp = order.timestamp?.toDate ? new Date(order.timestamp.toDate()).toLocaleString('en-GB', { timeZone: 'Asia/Yangon' }) : order.timeMMT;
+
+    content.innerHTML = `
+      <section>
+        <h3 class="font-bold text-lg mb-3">👤 Customer Information</h3>
+        <div class="space-y-2 bg-white/5 rounded-lg p-4">
+          <div><span class="text-gray-400">Name:</span> <span class="font-bold">${order.customerName}</span></div>
+          <div><span class="text-gray-400">Email:</span> <span class="font-bold text-[#0070FF]">${order.customerEmail}</span></div>
+          <div><span class="text-gray-400">Phone:</span> <span class="font-bold">${order.customerPhone}</span></div>
+          <div><span class="text-gray-400">Time:</span> <span class="text-sm text-gray-500">${timestamp}</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3 class="font-bold text-lg mb-3">🛍️ Order Details</h3>
+        <div class="space-y-2 bg-white/5 rounded-lg p-4">
+          <div><span class="text-gray-400">Total:</span> <span class="text-xl font-bold text-[#0070FF]">${order.total}</span></div>
+          <div class="pt-3 border-t border-white/10">
+            ${order.orderItems?.map(item => `
+              <div class="flex justify-between text-sm py-1">
+                <span>${item.name}</span>
+                <span class="text-gray-400">${item.price}</span>
+              </div>
+            `).join('') || '<p class="text-gray-500">No items</p>'}
+          </div>
+        </div>
+      </section>
+
+      ${order.spotifyEmail ? `
+      <section>
+        <h3 class="font-bold text-lg mb-3">📱 Spotify Credentials</h3>
+        <div class="space-y-2 bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+          <div><span class="text-gray-400">Email:</span> <span class="font-bold font-mono">${order.spotifyEmail}</span></div>
+          <div><span class="text-gray-400">Password:</span> <span class="font-bold font-mono">${order.spotifyPassword || '—'}</span></div>
+          <div><span class="text-gray-400">Plan:</span> <span class="font-bold">${order.spotifyPlan}</span></div>
+        </div>
+      </section>
+      ` : ''}
+
+      ${order.appleMusicEmail ? `
+      <section>
+        <h3 class="font-bold text-lg mb-3">🎵 Apple Music</h3>
+        <div class="space-y-2 bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+          <div><span class="text-gray-400">Email:</span> <span class="font-bold font-mono">${order.appleMusicEmail}</span></div>
+          <div><span class="text-gray-400">Plan:</span> <span class="font-bold">${order.appleMusicPlan}</span></div>
+        </div>
+      </section>
+      ` : ''}
+
+      <section>
+        <h3 class="font-bold text-lg mb-3">💳 Payment Verification</h3>
+        <div class="bg-white/5 rounded-lg p-4">
+          <p class="text-sm text-gray-400 mb-3">Payment Slip: ${order.slipFileName}</p>
+          <p class="text-sm text-gray-400 mb-4">Check your Telegram for the slip photo</p>
+          <div class="flex gap-3">
+            <button onclick="updateOrderStatus('${orderId}', 'verified')" class="flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded-lg text-sm font-bold transition-colors">
+              ✓ Verify Payment
+            </button>
+            <button onclick="updateOrderStatus('${orderId}', 'rejected')" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg text-sm font-bold transition-colors">
+              ✗ Reject
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-white/10 pt-4">
+        <p class="text-xs text-gray-500">Order ID: ${orderId}</p>
+      </section>
+    `;
+
+    modal.classList.remove('hidden');
+  }
+
+  async function updateOrderStatus(orderId, status) {
+    try {
+      await db.collection('orders').doc(orderId).update({ status });
+      const order = allOrders.find(o => o.id === orderId);
+      if (order) order.status = status;
+      displayOrders(allOrders);
+      closeModal();
+      alert(`Order marked as ${status}`);
+    } catch (err) {
+      console.error('Error updating order:', err);
+      alert('Error updating order');
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('orderModal').classList.add('hidden');
+  }
+
+  // Load on page load
+  loadOrders();
+
+  // Real-time updates
+  db.collection('orders').orderBy('timestamp', 'desc').onSnapshot(() => {
+    loadOrders();
+  });
+</script>
+
+</body>
+</html>
