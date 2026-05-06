@@ -745,9 +745,12 @@
 
   function addServiceToCartFromIndex(card) {
     const titleEl = card.querySelector('.text-white.font-bold.text-sm');
-    const priceEls = Array.from(card.querySelectorAll('.text-white.font-bold.text-sm'));
+    // Find all elements that look like prices (contain "MMK")
+    const allTextEls = Array.from(card.querySelectorAll('.text-white.font-bold.text-sm'));
+    const priceEl = allTextEls.find(el => el.textContent.includes('MMK'));
+    
     const name = titleEl?.textContent.trim() || card.dataset.name || 'Service';
-    const price = priceEls.length ? priceEls[priceEls.length - 1].textContent.trim() : '0 MMK';
+    const price = priceEl ? priceEl.textContent.trim() : '0 MMK';
     const iconEl = card.querySelector('.material-symbols-outlined');
     const icon = iconEl?.textContent.trim() || 'shopping_cart';
     const iconColor = Array.from(iconEl?.classList || []).find(c => c.startsWith('text-')) || 'text-white';
